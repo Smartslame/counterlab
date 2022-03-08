@@ -1,26 +1,66 @@
 package ru.sbt.edu.concurrency.locks;
 
 import org.junit.Test;
-import ru.sbt.edu.concurrency.counter.Counter;
-import ru.sbt.edu.concurrency.counter.ILockCounter;
-import ru.sbt.edu.concurrency.counter.SeqCounter;
+import ru.sbt.edu.concurrency.counter.*;
+import ru.sbt.edu.concurrency.locks.theory.LockOne;
 import ru.sbt.edu.concurrency.locks.theory.LockTwo;
 import ru.sbt.edu.concurrency.locks.theory.LockZero;
+import ru.sbt.edu.concurrency.locks.theory.PetersonLock;
 import ru.sbt.edu.concurrency.util.TwoThreadIds;
 
 import static junit.framework.TestCase.assertEquals;
 
 public class ILockTest {
+    private static final int NUM_ITER = 10000;
+
     @Test
-    public void testTheoryLock()  {
-        ILock lock = new LockZero();
-        Counter counter = new ILockCounter(lock);
-        //try: 1, 2, 10, 100, 1000
-        testCounter(counter, 1);
+    public void testLockZeroCounter() {
+        testTheoryLock(new LockZero());
     }
 
     @Test
-    public void testNaiveCounter()  {
+    public void testLockOneCounter() {
+        testTheoryLock(new LockOne());
+    }
+
+    @Test
+    public void testLockTwoCounter() {
+        testTheoryLock(new LockTwo());
+    }
+
+    @Test
+    public void testPetersonLockCounter() {
+        testTheoryLock(new PetersonLock());
+    }
+
+    @Test
+    public void testMutexCounter() {
+        testCounter(new MutexCounter(), NUM_ITER);
+    }
+
+    @Test
+    public void testReentrantLockCounter() {
+        testCounter(new ReentrantLockCounter(), NUM_ITER);
+    }
+
+    @Test
+    public void testConcurrentCounter() {
+        testCounter(new ConcurrentCounter(), NUM_ITER);
+    }
+
+    @Test
+    public void testMagicCounter() {
+        testCounter(new MagicCounter(Runtime.getRuntime().availableProcessors()), NUM_ITER);
+    }
+
+
+    private void testTheoryLock(ILock lock) {
+        Counter counter = new ILockCounter(lock);
+        testCounter(counter, NUM_ITER);
+    }
+
+    @Test
+    public void testNaiveCounter() {
         Counter counter = new SeqCounter();
 
         testCounter(counter, 1000);

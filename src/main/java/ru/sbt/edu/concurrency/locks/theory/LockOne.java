@@ -9,12 +9,18 @@ public class LockOne implements ILock {
 
     @Override
     public void lock() {
+        int i = TwoThreadIds.me();
+        int j = TwoThreadIds.not(i);
+        flag[i] = true;
+        while (flag[j]) {
+        }
 
     }
 
 
     @Override
     public void unlock() {
-
+        int i = TwoThreadIds.me();
+        flag[i] = false;
     }
 }

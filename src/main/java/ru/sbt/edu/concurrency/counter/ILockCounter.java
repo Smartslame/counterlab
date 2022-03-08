@@ -14,8 +14,9 @@ public class ILockCounter implements Counter {
 
     @Override
     public void increment() {
-        //todo : implement this!
+        lock.lock();
         count++;
+        lock.unlock();
     }
 
     @Override
